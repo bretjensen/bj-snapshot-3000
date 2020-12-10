@@ -1,4 +1,5 @@
 import boto3
+import botocore
 import click
 
 session = boto3.Session(profile_name='brettcli-admin-new')
@@ -92,7 +93,7 @@ def create_snapshots(project):
         i.stop()
         i.wait_until_stopped()
         for v in i.volumes.all():
-            print(f'Creating snapshot of {v.id}')
+            print(f'  Creating snapshot of {v.id}')
             v.create_snapshot(Description="Created by BJ Snapshot 3000")
         print(f'Starting {i.id}...')
         i.start()
@@ -134,7 +135,11 @@ def stop_instances(project):
 
     for i in instances:
         print(f'Stopping {i.id}...')
-        i.stop()
+        try:
+            i.stop()
+        except botocore.exceptions .ClientError as e:
+            print(f"  Could not stop {i.id}.\n  {str(e)}")
+            continue
 
     return
 
@@ -149,7 +154,11 @@ def stop_instances(project):
 
     for i in instances:
         print(f'Starting {i.id}...')
-        i.start()
+        try:
+            i.start()
+        except botocore.exceptions .ClientError as e:
+            print(f"  Could not start {i.id}.\n  {str(e)}")
+            continue
 
     return
 
