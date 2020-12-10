@@ -100,7 +100,7 @@ def create_snapshots(project):
 
     for i in instances:
         print(f'Stopping {i.id}...')
-        
+
         i.stop()
         i.wait_until_stopped()
 
@@ -108,12 +108,12 @@ def create_snapshots(project):
             if has_pending_snapshot(v):
                 print(f'  Skipping {v.id}, snapshot already in progress')
                 continue
-            
+
             print(f'  Creating snapshot of {v.id}')
             v.create_snapshot(Description="Created by BJ Snapshot 3000")
-        
+
         print(f'Starting {i.id}...')
-        
+
         i.start()
         i.wait_until_running()
 
