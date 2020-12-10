@@ -1,7 +1,7 @@
 import boto3
 import click
 
-session = boto3.Session(profile_name='brettcli-admin')
+session = boto3.Session(profile_name='brettcli-admin-new')
 ec2 = session.resource('ec2')
 
 
@@ -88,9 +88,17 @@ def create_snapshots(project):
     instances = filter_instances(project)
 
     for i in instances:
+        print(f'Stopping {i.id}...')
+        i.stop()
+        i.wait_until_stopped()
         for v in i.volumes.all():
             print(f'Creating snapshot of {v.id}')
             v.create_snapshot(Description="Created by BJ Snapshot 3000")
+        print(f'Starting {i.id}...')
+        i.start()
+        i.wait_until_running()
+
+    print('Job done')
     return
 
 
